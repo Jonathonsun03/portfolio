@@ -1,0 +1,1004 @@
+---
+title: "Sentiment Analysis of Asian American Tweets During the COVID-19 Pandemic and the Surge of Asian-American Hate Crimes"
+author: 
+  - Jonathon Sun
+  - Ying Dai
+  - Joyce Zhang
+date: "4/20/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F, fig.width=8, fig.height=4)
+options(scipen = 0, digits = 3)  # controls base R output
+if(!require('pacman')) {install.packages('pacman')}
+pacman::p_load(bestglm, glmnet, leaps, car, tidyverse, pROC, ROCR, ROCit, caret, kableExtra, ggplot2, plyr, ggplot2, glmnet, car, data.table, esquisse, MASS, parallel, DT, corrplot, ROCR, googledrive, stringr, readxl, tm, SnowballC, RColorBrewer, wordcloud, glmnet, dplyr, lubridate, wordcloud, tree, rpart, randomForest, ranger, data.table, textcat, textreg, syuzhet, keras, DataExplorer) # add the packages needed
+```
+
+
+# Executive Summary
+Asian American hate crimes has been on the rise since the beginning of covid-19 with rhetoric such as Kung-flu and the China virus. Due to the current social climate, twitter data using the search term Asian American is more crucial than ever to understand how Asian Americans are framed within the broader racial context of the United States. As such, the purposes of our final project are to 1) explore how Asian Americans are framed and described in social media during the COVID-19 pandemic; and 2) predict what common words are most likely to increase the likelihood of a tweet being retweeted on the topics around Asian Americans. Using data from Asian-American related tweets over the past five-months Twitter data between November 30th, 2020  2020 to April 1st, 2021 were collected using a tool called “ If This, Then That (IFTTT)” (https://ifttt.com/). We propose to use text mining, lasso, logistic regression, random forest, and neuro networks to conduct our analysis. Specifically using LASSO and logistic regression to build a “best” model to predict a tweet gets retweeted and builds a separate model using  random forest and neuro networks respectively to compare which approach works best.
+
+#Theoretical Framework
+There have been two theories which extraploate the Asian American racial positioning in the United States, Kim's (1999) theory on racial triangulation and Bonilla-Silva's (2004) theory on a tri-racial system of racial stratification. Kim’s (1999) theory on racial triangulation argues that Asian Americans were positioned to be valorized by White people; while being left out of civic opportunities. Despite this relative position, Asian Americans were portrayed similarly to Black Americans and seen as lazy, dishonest, irresponsible, and thieving. Bonilla-Silva (2004) theorizes that a tri-racial system of racial stratification exists: White, Honorary White, and Collective Black, a structure similar to Latin American and Caribbean societies. Both of these theories agree that regardless of who occupies the space between Black and White, a tri-racial system will continue to uphold white supremacy as a structural force (Bonilla-Silva, 2004). As Asian Americans have been positioned in a third space between the Black and White binary, Asian Americans have been labeled as the model minority. Some may argue that this is a positive stereotype; however, this is problematic in that it: (1) Frames Asian Americans as universally successful and reinforces color blind ideologies, (2) assumes Asian Americans are problem free and do not require resources and support, and (3) pits Asian Americans against other minority groups.
+
+Given Asian American's racial positioning being situated between the black and white binary as the model minority, covid-19 shows how that position can easily be removed as, Asian Americans are being discriminated against in more aggressive and straight forward ways. Since the beginning of Covid-19 Asian American owned businesses have been boycotted and in March 2021, we saw that 7 Asian American women were murdered. While these events show the precarious positioning of Asian Americans as the "Model Minority", these events do not show how people engage and talk about these kinds of events. As such, this provided us two broad questions to explore the shift in Asian American sentiment.
+
+1. Explore how Asian Americans are framed and described in social media Twitter during the covid-19 pandemic, and further analyze the emotions contained in tweets.
+2. Predict what common words are most likely to increase the likelihood of a tweet being retweeted on the topic around Asian Americans. 
+
+## RQ 1: Conclusion
+The first research question we had was to explore how Asian Americans are framed and described in social media during the COVID-19 pandemic and second explore what words are predictive of overall positive/negative sentiment scores. The emotion classification shows that most of the tweets includes a mixture of fear, trust, and anger which is consistent with how most people are feeling in general. However; what is interesting is that there are tweets that have a high sense of trust, given the challenges of discrimination and boycotting Asian American businesses, meaning that there is still a feeling of trust. The emotions in text also indicate that despite there being trust, most tweets included negative emotions over positive emotions.
+
+## RQ 2: Conclusion
+Our second question was to explore what words can increase the chance of tweet get retweeted. Across the LASSO, logistic regression, and random forest models we built, we consistently found that words including community, hate, violence, support, join, lead, biden, native, etc. are associated with increasing probability of a tweet get retweeted. 
+
+
+# Full Data
+
+## Cleaning the Data
+
+The original datasets were uploaded as excel documents and as such needed to be read in using `read_excel`. In total there were 45 different excel spreadsheets that needed to be read in and merged together. 
+
+```{r include=FALSE}
+#Importing all Data
+
+TwitterColNames <- c("Date","Username","Tweet","Twitterlink","weblink")
+TwitterData <- read_excel("data/Copy of New tweet from search.xlsx", col_names = TwitterColNames)
+TwitterData <- rbind(TwitterData, read_excel("data/Copy of New tweet from search (1).xlsx", col_names = TwitterColNames))
+TwitterData <- rbind(TwitterData, read_excel("data/Copy of New tweet from search (2).xlsx", col_names = TwitterColNames))
+TwitterData <- rbind(TwitterData, read_excel("data/Copy of New tweet from search (3).xlsx", col_names = TwitterColNames))
+TwitterData <- rbind(TwitterData, read_excel("data/Copy of New tweet from search (4).xlsx", col_names = TwitterColNames))
+TwitterData <- rbind(TwitterData, read_excel("data/Copy of New tweet from search (5).xlsx", col_names = TwitterColNames))
+TwitterData <- rbind(TwitterData, read_excel("data/Copy of New tweet from search (6).xlsx", col_names = TwitterColNames))
+TwitterData <- rbind(TwitterData, read_excel("data/Copy of New tweet from search (7).xlsx", col_names = TwitterColNames))
+TwitterData <- rbind(TwitterData, read_excel("data/Copy of New tweet from search (8).xlsx", col_names = TwitterColNames))
+TwitterData <- rbind(TwitterData, read_excel("data/Copy of New tweet from search (9).xlsx", col_names = TwitterColNames))
+TwitterData <- rbind(TwitterData, read_excel("data/Copy of New tweet from search (10).xlsx", col_names = TwitterColNames))
+TwitterData <- rbind(TwitterData, read_excel("data/Copy of New tweet from search (11).xlsx", col_names = TwitterColNames))
+TwitterData <- rbind(TwitterData, read_excel("data/Copy of New tweet from search (12).xlsx", col_names = TwitterColNames))
+TwitterData <- rbind(TwitterData, read_excel("data/Copy of New tweet from search (13).xlsx", col_names = TwitterColNames))
+TwitterData <- rbind(TwitterData, read_excel("data/Copy of New tweet from search (14).xlsx", col_names = TwitterColNames))
+TwitterData <- rbind(TwitterData, read_excel("data/Copy of New tweet from search (15).xlsx", col_names = TwitterColNames))
+TwitterData <- rbind(TwitterData, read_excel("data/Copy of New tweet from search (16).xlsx", col_names = TwitterColNames))
+TwitterData <- rbind(TwitterData, read_excel("data/Copy of New tweet from search (17).xlsx", col_names = TwitterColNames))
+TwitterData <- rbind(TwitterData, read_excel("data/Copy of New tweet from search (18).xlsx", col_names = TwitterColNames))
+TwitterData <- rbind(TwitterData, read_excel("data/Copy of New tweet from search (19).xlsx", col_names = TwitterColNames))
+TwitterData <- rbind(TwitterData, read_excel("data/Copy of New tweet from search (20).xlsx", col_names = TwitterColNames))
+TwitterData <- rbind(TwitterData, read_excel("data/Copy of New tweet from search (21).xlsx", col_names = TwitterColNames))
+TwitterData <- rbind(TwitterData, read_excel("data/Copy of New tweet from search (22).xlsx", col_names = TwitterColNames))
+TwitterData <- rbind(TwitterData, read_excel("data/Copy of New tweet from search (23).xlsx", col_names = TwitterColNames))
+TwitterData <- rbind(TwitterData, read_excel("data/Copy of New tweet from search (24).xlsx", col_names = TwitterColNames))
+TwitterData <- rbind(TwitterData, read_excel("data/Copy of New tweet from search (25).xlsx", col_names = TwitterColNames))
+TwitterData <- rbind(TwitterData, read_excel("data/Copy of New tweet from search (26).xlsx", col_names = TwitterColNames))
+TwitterData <- rbind(TwitterData, read_excel("data/Copy of New tweet from search (27).xlsx", col_names = TwitterColNames))
+TwitterData <- rbind(TwitterData, read_excel("data/Copy of New tweet from search (28).xlsx", col_names = TwitterColNames))
+TwitterData <- rbind(TwitterData, read_excel("data/Copy of New tweet from search (29).xlsx", col_names = TwitterColNames))
+TwitterData <- rbind(TwitterData, read_excel("data/Copy of New tweet from search (30).xlsx", col_names = TwitterColNames))
+TwitterData <- rbind(TwitterData, read_excel("data/Copy of New tweet from search (31).xlsx", col_names = TwitterColNames))
+TwitterData <- rbind(TwitterData, read_excel("data/Copy of New tweet from search (32).xlsx", col_names = TwitterColNames))
+TwitterData <- rbind(TwitterData, read_excel("data/Copy of New tweet from search (33).xlsx", col_names = TwitterColNames))
+TwitterData <- rbind(TwitterData, read_excel("data/Copy of New tweet from search (34).xlsx", col_names = TwitterColNames))
+TwitterData <- rbind(TwitterData, read_excel("data/Copy of New tweet from search (35).xlsx", col_names = TwitterColNames))
+TwitterData <- rbind(TwitterData, read_excel("data/Copy of New tweet from search (36).xlsx", col_names = TwitterColNames))
+TwitterData <- rbind(TwitterData, read_excel("data/Copy of New tweet from search (37).xlsx", col_names = TwitterColNames))
+TwitterData <- rbind(TwitterData, read_excel("data/Copy of Asian American General Search Twitter.xlsx", col_names = TwitterColNames))
+TwitterData <- rbind(TwitterData, read_excel("data/Copy of Asian American General Search Twitter (1).xlsx", col_names = TwitterColNames))
+TwitterData <- rbind(TwitterData, read_excel("data/Copy of Asian American General Search Twitter (2).xlsx", col_names = TwitterColNames))
+TwitterData <- rbind(TwitterData, read_excel("data/Copy of Asian American General Search Twitter (3).xlsx", col_names = TwitterColNames))
+TwitterData <- rbind(TwitterData, read_excel("data/Copy of Asian American General Search Twitter (4).xlsx", col_names = TwitterColNames))
+TwitterData <- rbind(TwitterData, read_excel("data/Copy of Asian American General Search Twitter (5).xlsx", col_names = TwitterColNames))
+TwitterData <- rbind(TwitterData, read_excel("data/Copy of Asian American General Search Twitter (6).xlsx", col_names = TwitterColNames))
+TwitterData <- rbind(TwitterData, read_excel("data/Copy of Asian American General Search Twitter (7).xlsx", col_names = TwitterColNames))
+```
+
+Once all the spreadsheets were merged each of the tweets needed to be cleaned and new columns added. First we created a new column of data that extracted the individual that rewteeted the tweet. Next the phrase "RT" needed to be removed. "RT" indicates that the tweet was retweeted. After this we removed the columns twitterlink and weblink. 
+
+```{r include=FALSE}
+## Remove retweet and white space
+# Extract all retweet phrases need to write a regex that pulls RT @[characters][:] 
+#"RT *@[^:]*:" <- this regex phrase pulls out RT @ [charcters] colon. one of the issues that I had was I didn't put in a literal space and kept in s/ https://regex101.com/r/yO3dG8/3
+TwitterData <- TwitterData %>%
+  mutate(Retweet = str_extract(TwitterData$Tweet, "RT *@[^:]*:"),)
+        
+TwitterData$Retweet <- str_remove(TwitterData$Retweet, "RT ")
+TwitterData$Retweet <- str_remove(TwitterData$Retweet, ":")
+TwitterData$Retweet <- replace_na(TwitterData$Retweet, "None")
+
+TwitterData$Date <- str_remove(TwitterData$Date, " at")
+TwitterData$Date <- lubridate::mdy_hm(TwitterData$Date)
+
+#Removes retweet information from the actual tweet 
+TwitterData$Tweet <- str_remove(TwitterData$Tweet, "RT *@[^:]*:")
+
+#Removing any white space to identify Unique tweets
+TwitterData$Tweet <- str_trim(TwitterData$Tweet)
+```
+
+
+```{r}
+#Recompiling the data
+## Removing non-English tweets, took me 15 mins to run below the two lines!
+# TwitterData$Languages <- textcat(TwitterData$Tweet)
+# TwitterData <- TwitterData %>% filter(Languages == "english")
+
+
+TwitterData <- data.frame(DateTime = TwitterData$Date,
+           Date = format(TwitterData$Date, '%y/%m/%d'),
+           Time = format(TwitterData$Date, '%H:%M:%S'),
+           Username = TwitterData$Username,
+           Tweet = TwitterData$Tweet,
+           Twitterlink = TwitterData$Twitterlink,
+           Weblink = TwitterData$weblink,
+           Retweet = TwitterData$Retweet)
+```
+
+Once the original dataset was cleaned, we created some extra variables. Based on the date and time, we created two more columns, one that kept track of the weekday and the time that the tweet was retweeted. Additionally, we built another column that counted the amount of characters and hashtags in each tweet. Finally the last column that was built, kept track of how long it took for a tweet to be rewteeted. For example, a tweet could have been originally tweeted on Friday at 12:00 pm then next time this tweet was retweeted Friday at 1:30 pm. The time to retweet column would document that that an 1 hour and 30 minutes passed since this was first tweeted. 
+
+```{r}
+
+## Adding Weekday and Month
+TwitterData <- TwitterData %>%
+  mutate(Weekday = weekdays(as.Date(TwitterData$Date)),
+         Month = months(as.Date(TwitterData$Date)))
+
+#Add number of characters in tweet and number of hashtags used
+TwitterData <- TwitterData %>%
+  mutate(Character_Num = nchar(TwitterData$Tweet),
+         Hashtag_Num = str_count(TwitterData$Tweet, "#"))
+
+
+#We can pull columns with only hastags later using select columns that start with #
+# Data exploration
+
+#Frequency of Unique Tweets & Average Retweet Time
+UniqueTweets <- TwitterData %>%
+  group_by(Tweet) %>%
+  dplyr::summarise(Total = n(),
+                   First_Tweet = min(DateTime)) %>%
+  arrange(desc(Total))
+
+UniqueTweets <- UniqueTweets %>%
+  rowid_to_column("ID")
+
+
+TwitterData <- left_join(TwitterData, UniqueTweets, by = "Tweet")
+TwitterData <- TwitterData %>%
+  mutate(Time_to_RT = DateTime - First_Tweet)
+
+colnames(TwitterData)
+ExcludeCol <- colnames(TwitterData)[c(6,7,14,15)]
+TwitterData <- TwitterData %>%
+  dplyr::select(-ExcludeCol)
+```
+
+After each of these extra columns were built, the original dataset was summarized to only include unique tweets and their summarized averages. This way, we were able to tell whether a tweet has been retweeted or not, and if so, how many times. Additionally, we were able to build two more columns, one that kept track of how many days the tweet persisted for and an average of retweets per day.
+
+```{r include=FALSE}
+UniqueTweetsDataset <- TwitterData %>%
+  group_by(ID, Tweet) %>%
+  dplyr::summarise(Total_Tweets = n(),
+                   Mean_Retweet_Time = mean(Time_to_RT),
+                   Length = mean(Character_Num),
+                   Unique_Users = length(unique(Username)),
+                   Unique_Days = length(unique(Date)),
+                   Retweets_Per_Day = Unique_Users/Unique_Days)
+
+UniqueTweetsDataset <- UniqueTweetsDataset %>%
+  mutate(
+    hashtagUsed = ifelse(grepl("#", UniqueTweetsDataset$Tweet), 1, 0),
+   hashtagCount = str_count(UniqueTweetsDataset$Tweet, "#"),
+    atUsed = ifelse(grepl("@", UniqueTweetsDataset$Tweet), 1, 0),
+         atCount = str_count(UniqueTweetsDataset$Tweet, "@"))
+```
+
+Although all these variables were not included in the analysis other the column indicating whether a tweet is being retweeted or not, we have included a summary statistics about these variables. 
+
+```{r eval=FALSE, include=FALSE, results= 'hold'}
+UniqueTweetsDatasetExp <- data.frame(UniqueTweetsDataset) %>%
+  dplyr::select(-c("ID"))
+
+DataExplorer::introduce(UniqueTweetsDatasetExp)
+DataExplorer::plot_intro(UniqueTweetsDatasetExp)
+DataExplorer::plot_histogram(UniqueTweetsDatasetExp)
+DataExplorer::plot_density(UniqueTweetsDatasetExp)
+DataExplorer::plot_correlation(UniqueTweetsDatasetExp)
+DataExplorer::plot_bar(UniqueTweetsDatasetExp)
+```
+
+# RQ 1: Explore how Asian Americans are framed and described in social media during the COVID-19 pandemic
+
+To begin the textual analysis, we began by extracting only the tweets from the unique tweets. This data is then cleaned to remove usernames, hashtags, digits, emojis and any links included in the tweet. The data was taken from the text column and transformed so each word is a column that describes the frequency of the word in a tweet called a corpus. To finish cleaning the corpus has the punctuation removed, all words changed to lower case, stop words removed, white space striped, numbers removed, and stem words turned on. When stem words is turned on the root of each word is included rather than the whole word. In additiona to these, 4 other words were removed, Asian American, Asian, American and Black. The reason for remove Asian American, Asian, and American, was because the tweets were selected because they included those words. The word Black was removed, because in a future analysis the word Black is associated as negative rather than Black Americans as a neutral connatation. 
+
+
+## Text mining preparation
+
+```{r include=FALSE, results= 'hold'}
+### Extract tweet content
+TextTweets <- UniqueTweetsDataset$Tweet
+
+TextTweets <- UniqueTweetsDataset$Tweet
+length(TextTweets)
+typeof(TextTweets)
+```
+
+
+```{r include=FALSE, results= 'hold'}
+
+### Remove unwanted content and build corpus
+TextTweets <- gsub("&amp", "", TextTweets) # remove &amp
+TextTweets <- gsub(" ?(f|ht)tp(s?)://(.*)", "", TextTweets) # remove link
+TextTweets <- gsub("@\\w+", "", TextTweets) # remove @username
+TextTweets <- gsub("#\\w+", "", TextTweets) # remove #hashtag
+TextTweets <- gsub("[[:digit:]]", "", TextTweets) # remove digit
+TextTweets <- gsub("[^\x01-\x7F]", "", TextTweets) # remove emoji
+TextTweets <- gsub(c("asianamerican","asian","american","black"), " ", TextTweets)
+
+mycorpus1 <- VCorpus(VectorSource(TextTweets))
+
+
+# Converts all words to lowercase
+mycorpus_clean <- tm_map(mycorpus1, content_transformer(tolower))
+
+# Removes common English stopwords (e.g. "with", "i")
+mycorpus_clean <- tm_map(mycorpus_clean, removeWords, stopwords("english"))
+
+
+# Removes any punctuation
+# NOTE: This step may not be appropriate if you want to account for differences
+#       on semantics depending on which sentence a word belongs to if you end up
+#       using n-grams or k-skip-n-grams.
+#       Instead, periods (or semicolons, etc.) can be replaced with a unique
+#       token (e.g. "[PERIOD]") that retains this semantic meaning.
+mycorpus_clean <- tm_map(mycorpus_clean, removePunctuation)
+
+# Removes numbers
+mycorpus_clean <- tm_map(mycorpus_clean, removeNumbers)
+
+# Stem words
+mycorpus_clean <- tm_map(mycorpus_clean, stemDocument, lazy = TRUE)   
+
+lapply(mycorpus_clean[4:5], as.character)
+
+dtm1 <- DocumentTermMatrix( mycorpus_clean )   ## library = collection of words for all documents
+class(dtm1)
+inspect(dtm1) # typeof(dtm1)  #length(dimnames(dtm1)$Terms)
+
+mycorpus1 <- tm_map(mycorpus1, removePunctuation) # remove punctuations
+mycorpus1 <- tm_map(mycorpus1, content_transformer(tolower)) # convert text to lower cases
+mycorpus1 <- tm_map(mycorpus1, removeWords, stopwords("english")) # remove stop words
+mycorpus1 <- tm_map(mycorpus1, stripWhitespace) # eliminate extra white spaces
+mycorpus1 <- tm_map(mycorpus1, removeNumbers) # remove numbers
+mycorpus1 <- tm_map(mycorpus1, stemDocument, lazy = TRUE) # stemmed corpus to comparitively display wordclouds
+mycorpus1 <- tm_map(mycorpus1, removeWords, c("asianamerican","asian","american","black"))
+```
+
+
+## visualize wordcloud
+
+To investigate how Asian Americans were described on Twitter, we only focus on the contents of each unique tweet. Based on the previously created word frequency matrix, we used the word cloud function to visualize the words that were frequently appeared in included tweets. 
+
+From the word cloud below we can see that the word "community" appeared with the highest frequency, followed by "hate", "white", "people", "support", "violence", etc. Without putting these words into each tweet, we cannot know much about how these words were used on Twitter to describe Asian Americans. However, considering the presidential election at the beginning of our data collection, as well as the continuing COVID-19 pandemic and recently surging Asian hate crimes, we consider people tend to discuss Asian Americans within a community context. People on Twitter keep up with current events and use social media such as Twitter to raise public awareness regarding events that jeopardize Asian Americans' safety and benefits and call for support.
+
+```{r include = F, results= 'hold'}
+### See two lines of the corpus
+lapply(mycorpus1[1000:1002], as.character) # getting two lines from corpus
+
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, results= 'hold'}
+dtmCorpus <- TermDocumentMatrix(mycorpus1)
+
+# kick out rare words 
+dtm.10<- removeSparseTerms(dtmCorpus, 1-.01)  
+inspect(dtm.10)
+```
+
+```{r include = F, results= 'hold'}
+set.seed(1)
+corpusMatrix <- as.matrix(dtm.10)
+sortedMatrix <- sort(rowSums(corpusMatrix), decreasing = TRUE)
+as.table(sortedMatrix[1:20])
+dfCorpus <- data.frame(word = names(sortedMatrix), freq = sortedMatrix)
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, fig.dim = c(6, 4)}
+wordcloud(words = dfCorpus$word, freq = dfCorpus$freq, min.freq = 1000, max.words = 100, random.order = FALSE, rot.per = 0.35,
+          colors = brewer.pal(8, "Dark2"))
+```
+
+## Get overall sentiment score
+### Syuzhet vector
+We next calculated the overall sentiment of the text file using the `Syuzhet` package. This package uses the bag-of-words approach, where the sentiment of each text is determined on the basis of individual words, while neglecting the role of syntax and grammar. The words contained in text were compared against one or more lexicons where positive and negative words are listed and associated with a degree of positive/negative sentiment, and eight basic emotions including anger, anticipation, disgust, fear, joy, sadness, surprise, and trust, defined by Plutchik (Reference: Plutchik R. The Nature of Emotions. American Scientist. 2001;89(4):344). Syuzhet also include other two lexicons namely Afinn and Bing. Afinn was developed by Finn Årup Nielsen. Bing was developed by Minqing Hu and Bing Liu. 
+
+The scale for sentiment scores using the syuzhet method is decimal and ranges from -1(indicating most negative) to +1(indicating most positive). The summary statistics of the suyzhet vector showed a median value of 0 and a mean value of -68.8, which can be interpreted as the overall average sentiment across all the responses is negative.  
+```{r  echo=FALSE, message=FALSE, warning=FALSE}
+# regular sentiment score using get_sentiment() function and method of your choice
+# please note that different methods may have different scales
+syuzhet_vector <- get_sentiment(mycorpus1, method="syuzhet")
+# see the first row of the vector
+#head(syuzhet_vector)
+# see summary statistics of the vector
+summary(syuzhet_vector) # the median = 0, and mean = -68.8
+```
+
+### Bing and Affin vector
+The mean pulled by Bing and Afinn are both negative, although their values are different. This is understandable since each lexicon uses a slightly different criterion and rating scale to classify text.
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+# bing
+bing_vector <- get_sentiment(mycorpus1, method="bing") # bing – binary scale with -1 indicating negative and +1 indicating positive sentiment
+#head(bing_vector)
+summary(bing_vector)
+
+#affin
+afinn_vector <- get_sentiment(mycorpus1, method="afinn") # afinn – integer scale ranging from -5 to +5
+#head(afinn_vector)
+summary(afinn_vector)
+```
+
+### Normalize scale and compare three vectors
+Since each lexicon based on different rating scale, we used the sign function to convert all positive number to `1`, all zeros remain `0`, and all negative numbers to `-1` and compare how they are different in word classification. The table below shows that the ratings of the first three document judged by Syuzhet, Bing, and Affin, respectively. From the table we can see the first meaningful element of the text file was rated as negative by all three methods.
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+#compare the first row of each vector using sign function
+rbind(
+  sign(head(syuzhet_vector)),
+  sign(head(bing_vector)),
+  sign(head(afinn_vector))
+)
+```
+
+
+## Emotion classification
+We further conducted emotion classification using the NRC lexicon. This lexicon is a list of English words and their associations with eight basic emotions (anger, fear, anticipation, trust, surprise, sadness, joy, and disgust) and two sentiments (negative and positive). 
+
+```{r include = F, results= 'hold'}
+# run nrc sentiment analysis to return data frame with each row classified as one of the following
+# emotions, rather than a score: 
+# anger, anticipation, disgust, fear, joy, sadness, surprise, trust 
+# It also counts the number of positive and negative emotions found in each row
+mycorpus2 <- as.character(mycorpus1)
+d<-get_nrc_sentiment(mycorpus2)
+# head(d,10) - to see top 10 lines of the get_nrc_sentiment dataframe
+head (d,10)
+class(d)
+dim(d)
+```
+
+### Get eight emotion sentiment score
+Using the NRC method, we get the eight emoion sentiment scores. From the bar chart below we can see the highest emotion contained in Asian-American Tweets is fear, followed by trust, anger, and sadness, etc.
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+#transpose
+td<-data.frame(t(d))
+#The function rowSums computes column sums across rows for each level of a grouping variable.
+td_new <- data.frame(rowSums(td))
+#Transformation and cleaning
+names(td_new)[1] <- "count"
+td_new <- cbind("sentiment" = rownames(td_new), td_new)
+rownames(td_new) <- NULL
+td_new2<-td_new[1:8,]
+#Plot One - count of words associated with each sentiment
+quickplot(sentiment, data=td_new2, weight=count, geom="bar", fill=sentiment, ylab="count")+ggtitle("Tweet sentiments")
+```
+
+Using the NRC lexicon, the eight emotions were futhered classifed into overall positive/negative domain. From the bar chart below we can see that the overall negative emotions consisted of about 60% of the whole Tweets.
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+#Plot two - count of words associated with each sentiment, expressed as a percentage
+barplot(
+  sort(colSums(prop.table(d[, 9:10]))), 
+  horiz = TRUE, 
+  cex.names = 0.7, 
+  las = 1, 
+  main = "Positive and Negative Emotions in Tweet", xlab="Percentage")
+```
+### Visualize eight emotion wordcloud 
+The comparison word cloud below showed the highest words contained in each emotion. Each emotion was presented in a unique color. Regarding the disgust and anger emotion, the highest words included hate, racism, crimes, violence, anti-asian, ect. Considering the current context, these words indicate that people who sent these Tweets felt disgust and angry about the surging Asian hate crimes and racism. While the most frequently appeared words in trust domain include first, vice, woman, biden, solidarity, etc, which may indicate that people have trust in the presidential election.
+
+```{r include = F, results= 'hold'}
+# get NRC sentiment score for each sentence
+d1<-get_nrc_sentiment(TextTweets)
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+# Comparison word cloud
+all1 = c(
+  paste(mycorpus1[d1$anger > 0], collapse=" "),
+  paste(mycorpus1[d1$anticipation > 0], collapse=" "),
+  paste(mycorpus1[d1$disgust > 0], collapse=" "),
+  paste(mycorpus1[d1$fear > 0], collapse=" "),
+  paste(mycorpus1[d1$joy > 0], collapse=" "),
+  paste(mycorpus1[d1$sadness > 0], collapse=" "),
+  paste(mycorpus1[d1$surprise > 0], collapse=" "),
+  paste(mycorpus1[d1$trust > 0], collapse=" ")
+)
+all1 <- removeWords(all1, stopwords("english"))
+all1 <- removeNumbers(all1)
+all1 <- removePunctuation(all1)
+# create corpus
+corpus1 = Corpus(VectorSource(all1))
+#
+# create term-document matrix
+tdm = TermDocumentMatrix(corpus1)
+#
+# convert as matrix
+tdm = as.matrix(tdm)
+tdm1 <- tdm[nchar(rownames(tdm)) < 11,]
+#
+# add column names
+colnames(tdm) = c('anger', 'anticipation', 'disgust', 'fear', 'joy', 'sadness', 'surprise', 'trust')
+colnames(tdm1) <- colnames(tdm)
+comparison.cloud(tdm1, random.order=FALSE,
+                 colors = c("#00B2FF", "red", "#FF0099", "#6600CC", "green", "orange", "blue", "brown"),
+                 title.size=1, max.words=200, scale=c(2.5, 0.9),rot.per=0.2)
+```
+
+# RQ 1b: Explore what words are predictive of overall NRC positive/negative sentiment scores
+
+After visualizing the words in tweets, we conducted a followup analysis to explore what words are predictive of an overall positive or negative tweet. Therefore, in the second part of the analysis of the first research question, we created a binary variable for each tweet which indicates the positive or negative sentiment the tweet has. The binary variable was derived from the total sentiment score which was calculated using the positive score minus the negative score.  
+
+```{r include=FALSE, results= 'hold'}
+## Data preparation
+### Get word frequency matrix
+dtm1 <- DocumentTermMatrix(mycorpus1)
+class(dtm1)
+inspect(dtm1)
+```
+
+```{r  include=FALSE, results= 'hold'}
+### Reduce the size of the bag
+dtm.10 <- removeSparseTerms(dtm1, 1-.01)  # control sparsity < .99
+inspect(dtm.10)
+colnames(dtm.10)[1:50]
+# words that is 
+colnames(dtm.10)[!(colnames(dtm.10) %in% colnames(dtm.10))]
+```
+
+ 
+```{r include=FALSE, results= 'hold'}
+names(d1)
+# extract sentiment ratings of each document and generate a total score where total score = positive - negative
+sentiment.score <- d1 %>% dplyr::select(negative, positive) %>% mutate(total.score = positive - negative)
+sentiment.score %>% summarise(max = max(total.score),
+                              min = min(total.score))
+
+# regroup total sentiment score into binary format
+sentiment.score$total.score[sentiment.score$total.score <= 0] <- 0 # 0 indicate negative emotion
+sentiment.score$total.score[sentiment.score$total.score >= 1] <- 1 # 1 indicate positive emotion
+sentiment.score$total.score <- as.factor(sentiment.score$total.score)
+```
+
+```{r include=FALSE, results= 'hold'}
+names(TwitterData)
+names(UniqueTweetsDataset)
+UniqueTwitterDataset1 <- UniqueTweetsDataset%>% dplyr::select(Unique_Users, ID, Total_Tweets, Retweets_Per_Day, hashtagCount, atUsed, atCount)
+# Combine the original data with the text matrix
+data1.temp <- data.frame(UniqueTwitterDataset1, sentiment.score, as.matrix(dtm.10))
+dim(data1.temp)
+names(data1.temp)[1:30]
+# str(data1.temp)
+
+# regroup retweet into binary format
+data1.temp$Unique_Users <- as.factor(data1.temp$Unique_Users )
+data1.temp <- data1.temp %>% mutate(Unique_Users = dplyr::recode(Unique_Users, "None"=0, .default = 1))
+
+
+# Remove unuseful variables such as "negative", "positive", "also", always, america, american, asian, asianamerican
+data2 <- data1.temp[, -c(2, 8, 9, 16:20)]
+names(data2)[1:20]
+dim(data2)
+
+
+write.csv(data2, "TwitterData_tm_freq.csv", row.names = FALSE)
+```
+
+To begin exploring what words were predictive of overall positive or negative sentiment scores, the data was split into testing and training data and then transformed into factor. We reserved 10000 observations randomly as our test data (`data2.test`) and the remaining 22135 as the training data (`data2.train`).
+
+```{r include=FALSE, results= 'hold'}
+data2 <- fread("TwitterData_tm_freq.csv")  #dim(data2)
+names(data2)[1:20] # notice that user_id, stars and date are in the data2
+dim(data2)
+data2$total.score <- as.factor(data2$total.score)
+table(data2$total.score)
+#str(data2)  object.size(data2)  435Mb!!!
+```
+
+```{r include=FALSE, results= 'hold'}
+#Reserve 10000 randomly as our test data (`data2.test`) and the remaining 22135 as the training data (`data2.train`)
+
+set.seed(1)  # for the purpose of reproducibility
+n <- nrow(data2)
+test.index <- sample(n, 10000)
+# length(test.index)
+data2.test <- data2[test.index, -c(1:6)] # only keep rating and the texts
+data2.train <- data2[-test.index, -c(1:6)]
+dim(data2.train)
+```
+
+## Analsysi 1: LASSO
+Lasso helps us reduce the amount of variables in our analysis. We extract useful variables using `lambda.1se` and decided on 143 words that did not have beta values of 0 or close to zero.
+
+```{r include=FALSE, results= 'hold'}
+### or try `sparse.model.matrix()` which is much faster
+y <- data2.train$total.score
+X1 <- sparse.model.matrix(total.score~., data=data2.train)[, -1]
+set.seed(2)
+result.lasso <- cv.glmnet(X1, y, alpha=.99, family="binomial")
+# 1.25 minutes in my MAC
+plot(result.lasso)
+# this this may take you long time to run, we save result.lasso
+saveRDS(result.lasso, file="data/TextMining_lasso.RDS")
+# result.lasso can be assigned back by 
+# result.lasso <- readRDS("data/TextMining_lasso.RDS")
+
+# number of non-zero words picked up by LASSO when using lambda.1se
+coef.1se <- coef(result.lasso, s="lambda.1se")  
+lasso.words <- coef.1se@Dimnames[[1]] [coef.1se@i][-1] # non-zero variables without intercept. 
+summary(lasso.words)
+
+
+# or our old way
+coef.1se <- coef(result.lasso, s="lambda.1se")  
+coef.1se <- coef.1se[which(coef.1se !=0),] 
+lasso.words <- rownames(as.matrix(coef.1se))[-1]
+summary(lasso.words)
+
+
+```
+
+```{r include=FALSE, results=TRUE}
+result.lasso <- readRDS("data/TextMining_lasso.RDS")
+plot(result.lasso)
+coef.1se <- coef(result.lasso, s="lambda.1se")  
+coef.1se <- coef.1se[which(coef.1se !=0),] 
+lasso.words <- rownames(as.matrix(coef.1se))[-1]
+summary(lasso.words)
+
+```
+
+## Analysis 2: Relaxed LASSO 
+
+We further run our relaxed `LASSO`. Input variables are chosen by `LASSO` and we get a regular logistic regression model. The relaxed LASSO then selects only significant variables that have a p-value less than 0.05. 
+
+```{r, include=FALSE, results= 'hold'}
+sel_cols <- c("total.score", lasso.words)
+# use all_of() to specify we would like to select variables in sel_cols
+data_sub <- data2.train %>% dplyr::select(all_of(sel_cols))
+result.glm <- glm(total.score~., family=binomial, data_sub) # takes 3.5 minutes
+## glm() returns a big object with unnecessary information
+# saveRDS(result.glm, 
+#      file = "data/TextMining_glm.RDS")
+
+## trim the glm() fat from 
+## https://win-vector.com/2014/05/30/trimming-the-fat-from-glm-models-in-r/
+stripGlmLR = function(cm) {
+  cm$y = c()
+  cm$model = c()
+  
+  cm$residuals = c()
+  cm$fitted.values = c()
+  cm$effects = c()
+  cm$qr$qr = c()  
+  cm$linear.predictors = c()
+  cm$weights = c()
+  cm$prior.weights = c()
+  cm$data = c()
+
+  
+  cm$family$variance = c()
+  cm$family$dev.resids = c()
+  cm$family$aic = c()
+  cm$family$validmu = c()
+  cm$family$simulate = c()
+  attr(cm$terms,".Environment") = c()
+  attr(cm$formula,".Environment") = c()
+  
+  cm
+}
+
+result.glm.small <- stripGlmLR(result.glm)
+
+saveRDS(result.glm.small, 
+     file = "data/TextMining_glm_small.RDS")
+```
+
+
+## Analysis 3: Positive/negative sentiment word cloud
+Based on the logistic regression beta values, we were able to plot a word cloud that describes all the words that are correlated to a positive sentiment score and negative sentiment score. From below the two word clouds we can see that positive words include proud, good, love, hope, etc., while negative words include discriminaiton, hate, violence, and hate, ect. These words generally are in line with previously found positive and negative word clouds using the `get_nrc_sentiment` function.
+
+**Positive word cloud**:
+Words correlated with positive sentiment include lead, join, today, community, 
+```{r warning=FALSE, include=FALSE, results= 'hold'}
+result.glm <- readRDS("data/TextMining_glm_small.RDS")
+result.glm.coef <- coef(result.glm)
+result.glm.coef[2:50]
+hist(result.glm.coef)
+
+# pick up the positive coef's which are positively related to the prob of being a good review
+good.glm <- result.glm.coef[which(result.glm.coef > 0)]
+good.glm <- good.glm[-1]  # took intercept out
+names(good.glm)[1:20]  # which words are positively associated with good ratings
+
+good.fre <- sort(good.glm, decreasing = TRUE) # sort the coef's
+round(good.fre, 4)[1:20] # leading 20 positive words, amazing!
+
+# hist(as.matrix(good.fre), breaks=30, col="red") 
+good.word <- names(good.fre)  # good words with a decreasing order in the coeff's
+
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, results=TRUE}
+cor.special <- brewer.pal(8,"Dark2")  # set up a pretty color scheme
+wordcloud(good.word, good.fre,  # make a word cloud
+          colors=cor.special, ordered.colors=F)
+```
+
+**Negative word cloud**:
+
+```{r include=FALSE, results= 'hold'}
+bad.glm <- result.glm.coef[which(result.glm.coef < 0)]
+bad.glm <- bad.glm[-1]
+
+cor.special <- brewer.pal(6,"Dark2")
+bad.fre <- sort(-bad.glm, decreasing = TRUE)
+round(bad.fre, 4)[1:20]
+
+# hist(as.matrix(bad.fre), breaks=30, col="green")
+bad.word <- names(bad.fre)
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+wordcloud::wordcloud(bad.word, bad.fre,
+          color=cor.special, ordered.colors=F)
+```
+
+
+# RQ 2: Predict what common words are most likely to increase the likelihood of a tweet be retweeted on the topics around Asian Americans.
+We used `LASSO` then Logistic regression to find the important variables. From here we will then create word clouds based on the beta values. In addition, we will run `randomForest` and nueronet. Each of these methods will then be compared to each other to determine the best model.
+
+```{r message=FALSE, warning=FALSE, include=FALSE, results= 'hold'}
+
+#Let's first read in the processed data with text being a vector.
+data2 <- fread("TwitterData_tm_freq.csv")  #dim(data2)
+names(data2)[1:20] # notice that user_id, stars and date are in the data2
+dim(data2)
+data2 <- data2 %>%
+  mutate(total.score = ifelse(data2$Total_Tweets >2, 1, 0),
+         as.factor(data2$total.score))
+table(data2$total.score)
+
+```
+
+```{r include=FALSE, results= 'hold'}
+set.seed(1)  # for the purpose of reproducibility
+n <- nrow(data2)
+test.index <- sample(n, 10000)
+# length(test.index)
+data2.test <- data2[test.index, -c(1:6)] # only keep rating and the texts
+data2.train <- data2[-test.index, -c(1:6)]
+dim(data2.train)
+names(data2.train)
+```
+
+## Analsysi 1: LASSO
+```{r include=FALSE, results= 'hold'}
+### or try `sparse.model.matrix()` which is much faster
+y <- data2.train$total.score
+X1 <- sparse.model.matrix(total.score~., data=data2.train)[, -1]
+set.seed(1)
+result.lasso <- cv.glmnet(X1, y, alpha=.99, family="binomial")
+# 1.25 minutes in my MAC
+plot(result.lasso)
+# this this may take you long time to run, we save result.lasso
+saveRDS(result.lasso, file="data/TextMining_lasso.RDS")
+# result.lasso can be assigned back by 
+# result.lasso <- readRDS("data/TextMining_lasso.RDS")
+# number of non-zero words picked up by LASSO when using lambda.1se
+coef.1se <- coef(result.lasso, s="lambda.1se")  
+lasso.words <- coef.1se@Dimnames[[1]] [coef.1se@i][-1] # non-zero variables without intercept. 
+summary(lasso.words)
+# or our old way
+coef.1se <- coef(result.lasso, s="lambda.1se")  
+coef.1se <- coef.1se[which(coef.1se !=0),] 
+lasso.words <- rownames(as.matrix(coef.1se))[-1]
+summary(lasso.words)
+```
+
+We resume our analyses by loading the `LASSO` results here. We extract useful variables using `lambda.1se`
+
+```{r results=TRUE}
+result.lasso <- readRDS("data/TextMining_lasso.RDS")
+plot(result.lasso)
+coef.1se <- coef(result.lasso, s="lambda.1se")  
+coef.1se <- coef.1se[which(coef.1se !=0),] 
+lasso.words <- rownames(as.matrix(coef.1se))[-1]
+summary(lasso.words)
+```
+Next we evaluate the testing performance of `LASSO` solution. We found the LASSO testing errors is 0.176, while the area under the curve is 0.656.
+```{r results= 'hold'}
+predict.lasso.p <- predict(result.lasso, as.matrix(data2.test[, -1]), type = "response", s="lambda.1se")
+  # output lasso estimates of prob's
+predict.lasso <- predict(result.lasso, as.matrix(data2.test[, -1]), type = "class", s="lambda.1se")
+  # output majority vote labels
+# LASSO testing errors
+fit.lasso.test.err <- mean(data2.test$total.score != predict.lasso)   # .176
+```
+
+```{r lasso ROC, eval=FALSE}
+# ROC curve for LASSO estimates
+pROC::roc(data2.test$total.score, predict.lasso.p, plot=TRUE) # AUC = 0.656
+```
+
+## Analysis 2: Relaxed LASSO 
+
+As an alternative model we will run our relaxed `LASSO`. Input variables are chosen by `LASSO` and we get a regular logistic regression model. Once again it is stored as `result.glm` in `TextMining.RData`. 
+
+```{r relax lasso, eval=FALSE}
+sel_cols <- c("total.score", lasso.words)
+# use all_of() to specify we would like to select variables in sel_cols
+data_sub <- data2.train %>% dplyr::select(all_of(sel_cols))
+result.glm <- glm(total.score~., family=binomial, data_sub) # takes 3.5 minutes
+## glm() returns a big object with unnecessary information
+# saveRDS(result.glm, 
+#      file = "data/TextMining_glm.RDS")
+## trim the glm() fat from 
+## https://win-vector.com/2014/05/30/trimming-the-fat-from-glm-models-in-r/
+stripGlmLR = function(cm) {
+  cm$y = c()
+  cm$model = c()
+  
+  cm$residuals = c()
+  cm$fitted.values = c()
+  cm$effects = c()
+  cm$qr$qr = c()  
+  cm$linear.predictors = c()
+  cm$weights = c()
+  cm$prior.weights = c()
+  cm$data = c()
+  
+  cm$family$variance = c()
+  cm$family$dev.resids = c()
+  cm$family$aic = c()
+  cm$family$validmu = c()
+  cm$family$simulate = c()
+  attr(cm$terms,".Environment") = c()
+  attr(cm$formula,".Environment") = c()
+  
+  cm
+}
+result.glm.small <- stripGlmLR(result.glm)
+saveRDS(result.glm.small, 
+     file = "data/TextMining_glm_small.RDS")
+```
+
+
+Use the testing data we get mis-classification error for logistic regression equals to 0.178, and the area under the curve equals to 0.661.
+
+```{r results= 'hold'}
+predict.glm <- predict(result.glm, data2.test, type = "response")
+class.glm <- ifelse(predict.glm > .5, "1", "0")
+# length(class.glm)
+testerror.glm <- mean(data2.test$total.score != class.glm)
+testerror.glm   # mis classification error is 0.178
+```
+
+```{r lasso ROC 1, eval=FALSE}
+pROC::roc(data2.test$total.score, predict.glm, plot=T) # AUC=.661
+```
+
+
+## Analysis 3: Word cloud of words with increasing chance of being retweeted
+The word cloud below shows the frequency of words and their association with being retweeted. We can see that words include lead, today, join, discuss, leader, condemn, 
+
+**Retweeted word cloud**:
+
+```{r, include=FALSE, results= 'hold'}
+result.glm <- readRDS("data/TextMining_glm_small.RDS")
+result.glm.coef <- coef(result.glm)
+result.glm.coef[2:50]
+hist(result.glm.coef)
+# pick up the positive coef's which are positively related to the prob of being retweeted
+good.glm <- result.glm.coef[which(result.glm.coef > 0)]
+good.glm <- good.glm[-1]  # took intercept out
+names(good.glm)[1:20]  # which words are positively associated with being retweeted
+good.fre <- sort(good.glm, decreasing = TRUE) # sort the coef's
+round(good.fre, 4)[1:20] # leading 20 words!
+# hist(as.matrix(good.fre), breaks=30, col="red") 
+good.word <- names(good.fre)  # words with a decreasing order in the coeff's
+
+```
+
+```{r results=TRUE, warning=FALSE, message=FALSE}
+cor.special <- brewer.pal(8,"Dark2")  # set up a pretty color scheme
+wordcloud(good.word, good.fre,  # make a word cloud
+          colors=cor.special, ordered.colors=F)
+```
+
+
+## Analysis 4: Random forest
+Random forest for classify whether a tweet get retweeted by building a tree with bootstrap sample recursively when the minimum sample size n is met. For each variable, the algorithm finds the best split point to miminize the misclassification error by majority vote. After finding the best variables and split points, the node was then split into two, with the end note output the majority vote with 0 or 1.
+
+We first ran 500 trees with mtry=sqrt(p), and from the plot below we found that after 200 trees, the oob error becomes stable and thus 200 trees are good enough.
+
+```{r results=TRUE, warning=FALSE, message=FALSE}
+data2.train$total.score <- as.factor(data2.train$total.score)
+fit.rf.train <- randomForest(total.score~., data2.train, mtry = 15, ntree=500) 
+plot(fit.rf.train, main = "Testing errors estimated by oob_mse") # after 200 trees, the error becomes stable
+legend("topright", colnames(fit.rf.train$err.rate), col = 1:3, cex = 0.8, fill = 1:3)
+```
+
+```{r include=FALSE, results='hold'}
+fit.rf.train$confusion # gives us the confusion matrix for the last forest!
+predict.rf <- predict(fit.rf.train, newdata=data2.test)  # output the classes by majority vote using all the trees evaluated with testing data
+rf.testing.error <-mean(data2.test$total.score != predict.rf) # MCE is .183
+```
+
+With the randome forest we built, we found variables including community, hate, support, violence, today, join, and stand, etc. are associated with higher chance of being retweeted. The results are quite similar to that of logistic regression.
+```{r results=TRUE, warning=FALSE, message=FALSE}
+varImpPlot(fit.rf.train, main="Important variables pulled by random forest") 
+```
+
+Using the testing data, we found that the testing misclassification error is 0.183. The area under the ROC curve is 0.817.
+```{r results=TRUE, warning=FALSE, message=FALSE}
+# get confusiion matrix for prediction 
+ data2.test$total.score <- as.factor(data2.test$total.score)
+ data2.test$pred <- predict(fit.rf.train, data2.test)
+ data2.test$pred <- as.factor(data2.test$pred)
+ confusionMatrix(data2.test$pred, data2.test$total.score) # Accuracy: 0.817
+pred <- predict(object = fit.rf.train,
+            newdata = data2.test,
+            type = "prob")
+roc(data2.test$total.score, pred[, "1"], plot=TRUE, col = "blue", main = "ROC - Random forest") # AUC: 0.663
+paste("Accuracy % of random forest: ", mean(data2.test$total.score == round(pred[,2], digits = 0))) # print the performance of each model
+```
+
+```{r include=FALSE, results='hold'}
+# Random forest testing error
+fit.rf.test.err <-mean(data2.test$total.score != data2.test$pred)
+fit.rf.test.err # 0.183
+```
+
+## Analysis 5: Neuronet
+Finally for our last analysis we ran nueronet, neuro net consists of an input layer, a set of hidden layers and an output layer. Each layer also includes a number of features for each layer which are then connected to a neuron.
+
+```{r include=FALSE, results='hold'}
+# Data prep
+data2 <- fread("data/TwitterData_tm_freq.csv")  #dim(data2)
+names(data2)[c(1:33)] # notice that user_id, stars and date are in the data2
+dim(data2)
+data2 <- data2 %>%
+  mutate(total.score = ifelse(data2$Total_Tweets >2, 1, 0),
+         as.factor(data2$total.score))
+table(data2$total.score)
+data3 <- data2[, -c(1:6)]; dim(data3)# the first element is the rating
+names(data3)[1:3]
+table(data3$total.score)
+```
+
+```{r include=FALSE, results='hold'}
+# **Validation data: `data3_val`**: reserve 10,000
+# Split data
+set.seed(1)  # for the purpose of reproducibility
+n <- nrow(data3)
+validation.index <- sample(n, 10000)
+length(validation.index)   # reserve 10000
+data3_val <- data3[validation.index, ] # 
+## validation input/y
+data3_xval <- as.matrix(data3_val[, -1])  # make sure it it is a matrix
+data3_yval <- as.matrix(data3_val[, 1]) # make sure it it is a matrix
+```
+
+
+```{r include=FALSE, results='hold'}
+## training input/y: need to be matrix/vector
+data3_xtrain <- data3[-validation.index, -1]   #dim(data3_xtrain)
+data3_ytrain <- data3[-validation.index, 1]   
+data3_xtrain <- as.matrix(data3_xtrain) # make sure it it is a matrix
+data3_ytrain <- as.matrix(data3_ytrain) # make sure it it is a matrix
+```
+
+First we need to define our model. In defining our model, we specified a model with a two hidden lyaers. One layer that included 16 neurons and one that included 8 neurons. Our final layer only included only two neurons to predict a binary response.
+
+When building the layer, the shape of the input needs to be specified. This refers to the length of each input vector, which in our case is 1072 (the 1072 possible words in our frequency dictionary).
+
+Having more hidden units (a higher-dimensional representation space) allows your network to learn more-complex representations, but it makes the network more computationally expensive and may lead to learning unwanted patterns. Here we use 16 neurons in the first layer and 8 neurons in the second layer. 
+
+```{r results=TRUE, warning=FALSE, message=FALSE}
+# set seed for keras
+# use_session_with_seed(1)
+tensorflow::tf$random$set_seed(1)
+p <- dim(data3_xtrain)[2] # number of input variables
+model <- keras_model_sequential() %>%
+  layer_dense(units = 16, activation = "relu", input_shape = c(p)) %>% 
+  # 1 layer with 16 neurons. default activation is relu
+  layer_dense(units = 8, activation = "relu") %>%  
+  # layer 2 with 8 neurons
+  layer_dense(units = 2, activation = "sigmoid") # output
+print(model)
+```
+
+```{r include=FALSE, results='hold'}
+##Compile the Model
+model %>% compile(
+  optimizer = "rmsprop",
+  loss = "sparse_categorical_crossentropy",
+  metrics = c("accuracy")
+)
+```
+
+```{r include=FALSE, results='hold'}
+fit1 <- model %>% fit(
+  data3_xtrain,
+  data3_ytrain,
+  epochs = 20,
+  batch_size = 512,
+  validation_split = .15  # set 15% of the data3_xtain, data3_ytrain as the validation data
+)
+plot(fit1)
+```
+
+From the graph below we see that by about 5 epochs our validation loss has bottomed out and we receive no further benefit from additional iterations.
+
+```{r results=TRUE, warning=FALSE, message=FALSE}
+plot(fit1)
+```
+
+Now we use the whole data set to get the final NN prediction model. The model again has two layers with 16 and 8 neurons in each layer, and has 5 Epochs.
+```{r results=TRUE, warning=FALSE, message=FALSE}
+p <- dim(data3_xtrain)[2] # number of input variables
+#retain the nn:
+model <- keras_model_sequential() %>%
+  layer_dense(units = 16, activation = "relu", input_shape = c(p)) %>% 
+  # 1 layer with 16 neurons. default activation is relu
+  layer_dense(units = 8, activation = "relu") %>%  # layer 2 with 8 neurons
+  layer_dense(units = 2, activation = "softmax") # output
+model %>% compile(
+  optimizer = "rmsprop",
+  loss = "sparse_categorical_crossentropy",
+  metrics = c("accuracy")
+)
+ model %>% fit(data3_xtrain, data3_ytrain, epochs = 5, batch_size = 512)
+```
+
+
+We then use the evaluation function to assess our performance on the validation data to report a final performance of the model built. Our accuracy on the validation data reaches 82.3% with only two fully connected layers! Meaning that we correctly classified 82.3% of the tweets got retweeted or not (this is a misclassification error of 0.177). 
+
+```{r eval=FALSE, message=FALSE, warning=FALSE, include=FALSE}
+results <- model %>% evaluate(data3_xval, data3_yval) 
+results # AUC= 0.823; loss= 0.458
+```
+
+
+## Analysis 6: Model Comparison
+
+We have obtained four models including `LASSO`, `Logistic regression`, `Random forest`, and `Neuro Net`. To compare the performance as classifiers we will evaluate their `misclassification error` and/or `AUC` values using `testing data`. From the table below we see there is no obvious winner within the four models. We choose logistic regression as the "best" model since it was based on the LASSO output. Neuro net in our study did not outperform other models. One potential reason is that we use bag of words to process the data and did not include variables other than words extracted from tweets. Regarding random forest, it has the highest misclassification error in testing data (although the difference is tiny), which may be related to the fact that the model we built could overfit the training data. However, across the LASSO, logistic regression, and random forest models, we consistently found that words including community, hate, violence, support, lead, native, etc. are associated with increasing probability of a tweet get retweeted.  
+
+
+
+```{r eval=FALSE, include=FALSE}
+fit.lasso.test.err # LASSO testing error
+testerror.glm # logistic regression testing error
+rf.testing.error # Random forest testing error
+nn.testing.err <- 1 - results[[2]] # Neuronet testing error
+
+data.frame(lasso = fit.lasso.test.err,
+           logit = testerror.glm,
+           RandomForest = rf.testing.error,
+           NeuroNet = nn.testing.err)
+```
+
+# Conclusion
+
+## RQ 1: Conclusion
+The first research question we had was to explore how Asian Americans are framed and described in social media during the COVID-19 pandemic and second explore what words are predictive of overall positive/negative sentiment scores. The emotion classification shows that most of the tweets includes a mixture of fear, trust, and anger which is consistent with how most people are feeling in general. However; what is interesting is that there are tweets that have a high sense of trust, given the challenges of discrimination and boycotting Asian American businesses, meaning that there is still a feeling of trust. The emotions in text also indicate that despite there being trust, most tweets included negative emotions over positive emotions.
+
+## RQ 2: Conclusion
+Our second question was to explore what words can increase the chance of a tweet get retweeted. Across the LASSO, logistic regression, and random forest models we built, we consistently found that words including community, hate, violence, support, join, lead, biden, native, etc. are associated with increasing probability of a tweet get retweeted. 
+
+```{r eval=FALSE, message=FALSE, warning=FALSE}
+data_sub <- data2.train %>% dplyr::select(all_of(sel_cols))
+result.glm <- glm(total.score~., family=binomial, data_sub)
+Anova(result.glm)
+```
+
+## Recommendation
+Our study has several implications. First, the high percentage of fear, sadness, angry feelings remain relatively high on Asian-American-related tweets during the past few months. Considering words that frequently appeared in these negative emotion domains are relevant to the surge of Anti-Asian and Asian hate crimes during the past few months. This calls for more public awareness of providing support to Asian-Americans. Regarding how to increase a tweet to be retweeted, we recommend that emphasizing the Asian-American community, follow the current events, and increase public awareness of providing support to Asian-Americans.     
+
