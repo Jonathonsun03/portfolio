@@ -4,7 +4,7 @@
 
 ### MUSA 508 - Public Policy Analysis Assignments
 
-[Transit Oriented Development - NJ Transit Mercer and Middlesex County ](/Projects/HW1.html)
+[Transit Oriented Development - NJ Transit Mercer and Middlesex County](/Projects/HW1.html)
 <img src="images/HW1.png">
 
 ---
