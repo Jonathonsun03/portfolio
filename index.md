@@ -23,7 +23,9 @@ Although train delays may seem like minor annoyances in the daily life of a comm
 
 We used data from <a href="https://www.kaggle.com/pranavbadami/nj-transit-amtrak-nec-performance?select=2018_11.csv">Kaggle</a> to predict lateness of trains and a linear regression which takes into account, weather, time, adnd other variables to predict lateness of trains. 
 
-<img src="images/HW1.png">
+[Presentation link](https://www.youtube.com/)
+
+<img src="images/MUSA507_Final.gif">
 
 ---
 
