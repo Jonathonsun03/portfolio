@@ -2,10 +2,10 @@
 
 ---
 
-### Projects for MUSA 508: Public Policy Analysis
+### Conference Presentations
 
-[Transit Oriented Development Mercer & Middlesex County](/Projects/HW1.html)
-<img src="images/HW1.png>
+[Other title ](/Projects/HW1.html)
+<img src="images/HW1.png?raw=true">
 
 ---
 [Project 2 Title](/pdf/sample_presentation.pdf)
