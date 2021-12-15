@@ -57,15 +57,6 @@ This project attempted to predict within family crime using gambling violations,
 <img src="images/HW3.png">
 
 ---
-<b>[Risk Prediction - Within Family Crime](/Projects/MUSA508_HW3.html)</b> 
-<br>
-<i>Author: Jonathon Sun</i>
-<br>
-This project attempted to predict within family crime using gambling violations, public drunkness, and rape occurrences as nearest neighbors. This project focused on using fishnets. 
-
-<img src="images/HW3.png">
-
----
 
 ### STATS 701 - Modern Data Mining 
 <i>Instructor: Dr. Linda Zhao</i> 
