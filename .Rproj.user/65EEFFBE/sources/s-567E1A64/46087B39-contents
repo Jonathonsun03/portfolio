@@ -5,7 +5,7 @@
 ### Conference Presentations
 
 [Project 1 Title](/Projects/HW1.html)
-<img src="images/HW1.png?raw=true"/>
+<img src="images/HW1.png>
 
 ---
 [Project 2 Title](/pdf/sample_presentation.pdf)
