@@ -1,36 +1,35 @@
-## Portfolio
+
+## Course Work
 
 ---
 
 ### MUSA 508 - Public Policy Analysis Assignments
 
-[Transit Oriented Development - Mercer and Middlesex County New Jersey](/Projects/MUSA_HW1.html)
+[Transit Oriented Development - Mercer and Middlesex County New Jersey](/Projects/MUSA508_HW1.html)
 <img src="images/HW1.png">
 
 ---
-[Home Price Predictions](/Projects/MUSA_HW2.html)
+[Home Price Predictions](/Projects/MUSA508_HW2.html)
 <img src="images/HW2.png">
 
 ---
-[Risk Prediction - Within Family Crime](/Projects/MUSA_HW3.html)
+[Risk Prediction - Within Family Crime](/Projects/MUSA508_HW3.html)
 <img src="images/HW3.png">
 
 ---
-
-[Risk Prediction - Within Family Crime](/Projects/MUSA_HW3.html)
+[Risk Prediction - Within Family Crime](/Projects/MUSA508_HW3.html)
 <img src="images/HW3.png">
 
 ---
-
-[Risk Prediction - Within Family Crime](/Projects/MUSA_HW3.html)
+[Risk Prediction - Within Family Crime](/Projects/MMUSA508_HW3.html)
 <img src="images/HW3.png">
 
 ---
 
 ### STATS 701 - Modern Data Mining
 
-[Transit Oriented Development - Mercer and Middlesex County New Jersey](/Projects/HW1.html)
-<img src="images/HW1.png">
+[Wharton Radio, Women in Science, and Major Leage Baseball Case Studies](/Projects/STAT701_HW1.html)
+<img src="images/STAT701_HW1.png">
 
 ---
 [Home Price Predictions](/Projects/HW2.html)
@@ -42,9 +41,11 @@
 
 ---
 
-### Side Projects
+## Personal Projects
 
-- [Regional Foot Traffic Analysis ](/Projects/SafeGraph_FootTraffic.html)
+---
+
+- [Regional Foot Traffic Analysis](/Projects/SafeGraph_FootTraffic.html)
 - [Project 2 Title](http://example.com/)
 - [Project 3 Title](http://example.com/)
 - [Project 4 Title](http://example.com/)
