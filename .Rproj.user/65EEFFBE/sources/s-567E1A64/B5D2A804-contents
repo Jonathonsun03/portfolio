@@ -6,9 +6,9 @@ description: > # your text below (remove <br> elements if you don't need line br
   Second Year Ph.D. student at University of Pennsylvania - Graduate School of Education
   <br><br>
   <a href="https://www.linkedin.com/in/jonathon-sun-2b568640">View My LinkedIn Profile</a> 
-  <br><br>
+  <br>
   <a href="pdf/sample_presentation.pdf"> Resume </a>
-  <br><br>
+  <br>
   <a href="pdf/sample_presentation.pdf"> CV </a>
   <br><br>
 theme: jekyll-theme-minimal
