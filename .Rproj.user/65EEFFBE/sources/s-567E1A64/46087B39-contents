@@ -53,6 +53,7 @@ Authors: Jonathon Sun, Joyce Zhang, and Ying Dai
 
 ## Personal Projects
 These are projects that I took up on my own for fun.
+
 ---
 
 [Regional Foot Traffic Analysis](/Projects/SafeGraph_FootTraffic.html)
