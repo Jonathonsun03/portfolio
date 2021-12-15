@@ -11,6 +11,19 @@
 <br>
 Course Description: This course teaches advanced spatial analysis and an introduction to data science/machine learning in the urban planning and public policy realm. The class focuses on real-world spatial analysis applications and, in combination with introductory machine learning, provides students a modern framework for efficiently allocate limited resources across space. We will learn novel approaches for ensuring our models do not discriminate against communities/people of color as well as communities of different income levels. 
 
+---
+
+<b>[NJ Transit - Predicting Late Trains](/Projects/MUSA508_Final.html)</b>
+<br>
+<i>Author: Jonathon Sun and Johnathan Clementi</i>
+<br>
+THIS PROJECT IS STILL IN PROGRESS 12-15-2021
+
+Although train delays may seem like minor annoyances in the daily life of a commuter, there are real economic costs to train tardiness. The city of New York Office of the Controller found that major delays (5 minute delays) annually cost the city $170.2 million dollars (Stringer, 2017). Although this study was done on subway delays, the same idea can be applied to regional trains as the NJTransit has a history of delays (McGeehan, 2018). The algorithm that we have developed predicts how late trains will be based on a variety of variables, and can be utilized by agencies, researchers, and the average commuter. 
+
+We used data from <a href="https://www.kaggle.com/pranavbadami/nj-transit-amtrak-nec-performance?select=2018_11.csv">Kaggle</a> to predict lateness of trains and a linear regression which takes into account, weather, time, adnd other variables to predict lateness of trains. 
+
+<img src="images/HW1.png">
 
 ---
 
