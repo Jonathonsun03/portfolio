@@ -5,10 +5,8 @@
 
 ### MUSA 508 - Public Policy Analysis Assignments
 Instructor: Dr. Michael Fichman and Matt Harris 
-
-<br>
 Course Description: This course teaches advanced spatial analysis and an introduction to data science/machine learning in the urban planning and public policy realm. The class focuses on real-world spatial analysis applications and, in combination with introductory machine learning, provides students a modern framework for efficiently allocate limited resources across space. We will learn novel approaches for ensuring our models do not discriminate against communities/people of color as well as communities of different income levels. 
-<br>
+
 
 ---
 
@@ -54,7 +52,6 @@ Authors: Jonathon Sun, Joyce Zhang, and Ying Dai
 ---
 
 ## Personal Projects
-
 These are projects that I took up on my own for fun.
 ---
 
