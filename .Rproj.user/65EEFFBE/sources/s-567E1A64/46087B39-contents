@@ -4,16 +4,16 @@
 
 ### MUSA 508 - Public Policy Analysis Assignments
 
-[Transit Oriented Development](/Projects/HW1.html)
+[Transit Oriented Development - Mercer and Middlesex County New Jersey](/Projects/HW1.html)
 <img src="images/HW1.png">
 
 ---
-[Project 2 Title](/pdf/sample_presentation.pdf)
-<img src="images/dummy_thumbnail.jpg?raw=true"/>
+[Home Price Predictions](/Projects/HW2.html)
+<img src="images/HW2.png">
 
 ---
-[Project 3 Title](http://example.com/)
-<img src="images/dummy_thumbnail.jpg?raw=true"/>
+[Risk Prediction - Within Family Crime](/Projects/HW3.html)
+<img src="images/HW3.png">
 
 ---
 
