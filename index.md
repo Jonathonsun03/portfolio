@@ -4,6 +4,31 @@
 
 ### MUSA 508 - Public Policy Analysis Assignments
 
+[Transit Oriented Development - Mercer and Middlesex County New Jersey](/Projects/MUSA_HW1.html)
+<img src="images/HW1.png">
+
+---
+[Home Price Predictions](/Projects/MUSA_HW2.html)
+<img src="images/HW2.png">
+
+---
+[Risk Prediction - Within Family Crime](/Projects/MUSA_HW3.html)
+<img src="images/HW3.png">
+
+---
+
+[Risk Prediction - Within Family Crime](/Projects/MUSA_HW3.html)
+<img src="images/HW3.png">
+
+---
+
+[Risk Prediction - Within Family Crime](/Projects/MUSA_HW3.html)
+<img src="images/HW3.png">
+
+---
+
+### STATS 701 - Modern Data Mining
+
 [Transit Oriented Development - Mercer and Middlesex County New Jersey](/Projects/HW1.html)
 <img src="images/HW1.png">
 
@@ -17,9 +42,9 @@
 
 ---
 
-### Projects
+### Side Projects
 
-- [Project 1 Title](http://example.com/)
+- [Regional Foot Traffic Analysis ](/Projects/SafeGraph_FootTraffic.html)
 - [Project 2 Title](http://example.com/)
 - [Project 3 Title](http://example.com/)
 - [Project 4 Title](http://example.com/)
