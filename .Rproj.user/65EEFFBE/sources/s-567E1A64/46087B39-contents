@@ -16,13 +16,6 @@
 [Risk Prediction - Within Family Crime](/Projects/MUSA508_HW3.html)
 <img src="images/HW3.png">
 
----
-[Risk Prediction - Within Family Crime](/Projects/MUSA508_HW3.html)
-<img src="images/HW3.png">
-
----
-[Risk Prediction - Within Family Crime](/Projects/MMUSA508_HW3.html)
-<img src="images/HW3.png">
 
 ---
 
@@ -30,14 +23,6 @@
 
 [Wharton Radio, Women in Science, and Major Leage Baseball Case Studies](/Projects/STAT701_HW1.html)
 <img src="images/STAT701_HW1.png">
-
----
-[Home Price Predictions](/Projects/HW2.html)
-<img src="images/HW2.png">
-
----
-[Risk Prediction - Within Family Crime](/Projects/HW3.html)
-<img src="images/HW3.png">
 
 ---
 
