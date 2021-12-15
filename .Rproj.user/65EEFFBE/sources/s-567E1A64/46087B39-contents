@@ -1,4 +1,7 @@
 
+# Portfolio
+
+
 ## Course Work
 
 ---
@@ -12,7 +15,7 @@ Course Description: This course teaches advanced spatial analysis and an introdu
 
 <b>[Transit Oriented Development - Mercer and Middlesex County New Jersey](/Projects/MUSA508_HW1.html)</b>
 <br>
-Author: Jonathon Sun
+<i>Author: Jonathon Sun</i>
 <br>
 This project used data from `tidycensus` and NJtransit to determine if proximity towards regional rail had higher educational attainment. 
 
@@ -20,25 +23,29 @@ This project used data from `tidycensus` and NJtransit to determine if proximity
 
 ---
 
-[Home Price Predictions](/Projects/MUSA508_HW2.html)
+<b>[Home Price Predictions](/Projects/MUSA508_HW2.html)</b>
 <br>
-Authors: Jonathon Sun and Johnathan Clementi <br>
+<i>Authors: Jonathon Sun and Johnathan Clementi</i>
+<br>
 This project used linear regression to estimate the sale price of homes in Boulder, Colorado. 
 
 <img src="images/HW2.png">
 
 ---
-[Risk Prediction - Within Family Crime](/Projects/MUSA508_HW3.html) 
+<b>[Risk Prediction - Within Family Crime](/Projects/MUSA508_HW3.html)</b> 
 <br>
-Author: Jonathon Sun
+<i>Author: Jonathon Sun</i>
 <br>
+This project attempted to predict within family crime using gambling violations, public drunkness, and rape occurrences as nearest neighbors. This project focused on using fishnets. 
 
 <img src="images/HW3.png">
 
 ---
 
-### STATS 701 - Modern Data Mining
-Instructor: Dr. Linda Zhao <br> 
+### STATS 701 - Modern Data Mining 
+<br>
+Instructor: Dr. Linda Zhao 
+<br> 
 Statistics has been evolving rapidly in the era of big data and provides tools to harvest knowledge
 from big data. Focusing on methodologies with reasoning, the class brings in a large set of cutting
 edge machine learning techniques with applications. Hands-on data experience with R throughout
@@ -57,14 +64,16 @@ hands-on skills in handling data of essentially any size.
 <br>
 Authors: Jonathon Sun, Joyce Zhang, and Ying Dai 
 <br>
+This assignment consisted of three difference case studies. The first was understanding who was listening to Wharton Radio. The second case was women in science and what women are studying. The last case was analyzing Major League Baseball Payroll and win rates.
 <img src="images/STAT701_HW1.PNG">
 
 ---
 
-[Sentiment Towards Asian Americans Twiter data](/Projects/STAT701_FINAL.html)
+[Sentiment Towards Asian Americans Twiter data](/Projects/STAT701_Final.html)
 <br>
 Authors: Jonathon Sun, Joyce Zhang, and Ying Dai 
 <br>
+The final in this course was a topic of our choosing. Asian American hate crimes has been on the rise since the beginning of covid-19 with rhetoric such as Kung-flu and the China virus. Due to the current social climate, twitter data using the search term Asian American is more crucial than ever to understand how Asian Americans are framed within the broader racial context of the United States. As such, the purposes of our final project are to 1) explore how Asian Americans are framed and described in social media during the COVID-19 pandemic; and 2) predict what common words are most likely to increase the likelihood of a tweet being retweeted on the topics around Asian Americans. Using data from Asian-American related tweets over the past five-months Twitter data between November 30th, 2020 2020 to April 1st, 2021 were collected using a tool called “ If This, Then That (IFTTT)” (https://ifttt.com/). We propose to use text mining, lasso, logistic regression, random forest, and neuro networks to conduct our analysis. Specifically using LASSO and logistic regression to build a “best” model to predict a tweet gets retweeted and builds a separate model using random forest and neuro networks respectively to compare which approach works best.
 <img src="images/STAT701_FINAL.png">S
 
 ---
