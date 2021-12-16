@@ -3,6 +3,7 @@
 ---
 
 ## Introduction
+😄 Pronouns: He/Him/His
 
 I'm Jonathon Sun, a second year Ph.D student studying Higher Education at the University of Pennsylvania Graduate School of Education. My particular areas of research are college access, Asian American studies, and urban spatial analysis.
 
