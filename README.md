@@ -1,8 +1,10 @@
-## Developer Portfolio Landing Page Template
+## Jonathon Sun Portfolio
+
+---
 
 ### Introduction
 
-Use this template if you need a quick developer / data science portfolio! Based on a Minimal Jekyll theme for GitHub Pages.
+I'm Jonathon Sun, a second year Ph.D student studying Higher Education at the University of Pennsylvania Graduate School of Education. My particular areas of research are college access, Asian American studies, and urban spatial analysis. 
 
 <img src="images/demo.gif?raw=true"/>
 
