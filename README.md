@@ -6,6 +6,8 @@
 
 I'm Jonathon Sun, a second year Ph.D student studying Higher Education at the University of Pennsylvania Graduate School of Education. My particular areas of research are college access, Asian American studies, and urban spatial analysis.
 
+## Education
+
 ### The University of Missouri, May 2018 
 Masters of Arts in Educational Leadersihp and Policy Analysis 
 
