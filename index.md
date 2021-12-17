@@ -13,7 +13,7 @@ Course Description: This course teaches advanced spatial analysis and an introdu
 
 ---
 
-<b>[NJ Transit - Predicting Late Trains](/Projects/MUSA508_Final.html)</b>
+<b>[NJ Transit - Predicting Late Trains](/Projects/Final_markdown.html)</b>
 <br>
 <i>Author: Jonathon Sun and Johnathan Clementi</i>
 <br>
